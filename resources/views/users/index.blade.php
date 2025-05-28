@@ -1,25 +1,61 @@
+@extends('layouts.admin')
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios</title>
-</head>
-<body>
+@section('content')
+    <div class="card  mt-4 mb-3 border-light shadow">
 
-    <a href="{{ route('user.create') }}">Cadastrar</a><br>
-    <h2>Usuarios</h2>
 
-    @if(session('success'))
-    <p style="color: green">
-        {{ session('success') }}
-    </p>
-    @endif
+        <div class="card-header hstack gap-2">
+            <b>Listar Usuários</b>
+            <span class="ms-auto">
+                <a href="{{ route('user.create') }}" class="btn btn-success">Cadastrar</a>
+            </span>
+        </div>
 
-    {{ dd('users') }}
 
-    
 
-</body>
-</html>
+        @if(session('success'))
+            <p style="color: green">
+                {{ session('success') }}
+            </p>
+        @endif
+
+        <table class="table-dark table">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col" class="text-center">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @forelse ($users as $user)
+
+                    <tr>
+                        <th>{{$user->id}}</th>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        <td class="text-center">
+                            <a href="{{ route('user.show', ['user' => $user->id]) }}"
+                                class="btn btn-warning btn-sm">Detalhes</a>
+                            <a href="{{ route('user.edit', ['user' => $user->id]) }}" class="btn btn-info btn-sm">Editar</a>
+                            <form action="{{ route('user.destroy', ['user' => $user->id]) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</button>
+                            </form>
+
+                        </td>
+                    </tr>
+
+                @empty
+
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+
+@endsection
